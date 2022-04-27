@@ -101,8 +101,6 @@ Terraform est à la fois constructif et destructif en fonction de ce qui se trou
 
 `terraform destroy` nettoiera toute l'infrastructure définie dans le fichier Terraform.
 
-Traduit avec www.DeepL.com/Translator (version gratuite)
-
 ## 01
 
 Si vous ne l'avez pas encore fait, créez un répertoire de travail dans lequel vous allez travailler sur ce Kata. Créez un nouveau fichier dans ce répertoire appelé `main.tf` et ouvrez ce fichier dans votre IDE.
@@ -126,7 +124,13 @@ provider "google" {
 
 Ce bloc indique à Terraform que nous utilisons AWS et que nous allons déployer notre infrastructure dans `us-east-1-b`.
 
-Après avoir enregistré ce fichier, exécutez `terraform init`. [Terraform init](https://www.terraform.io/docs/cli/commands/init.html) cela initialise votre répertoire de travail avec quelques fichiers et répertoires cachés dont Terraform a besoin.
+Après avoir enregistré ce fichier, exécutez
+
+```
+terraform init
+```
+
+[Terraform init](https://www.terraform.io/docs/cli/commands/init.html) initialise votre répertoire de travail avec quelques fichiers et répertoires cachés dont Terraform a besoin.
 
 ## 02
 
