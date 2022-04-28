@@ -30,8 +30,8 @@ Vérifier que la facturation a bien été mise en place sur le projet. Sélectio
 
 Assurez-vous que vous disposez des autorisations Compute Engine nécessaires sur votre compte utilisateur:
 
-compute.instance._
-compute.firewalls._
+`compute.instance.*`
+`compute.firewalls.*`
 
 [Accéder à la page IAM](https://console.cloud.google.com/iam-admin/iam?hl=fr&_ga=2.26325172.807002807.1651086738-997347237.1649762783&_gac=1.27728206.1650559456.Cj0KCQjwgYSTBhDKARIsAB8Kuku36Hk2k82u55xBcNxRZuEwWaaWKMf3eQJAJPWz86oC2T2Ipje-V_oaAisTEALw_wcB)
 
@@ -136,7 +136,7 @@ Nous allons maintenant créer une instance EC2. Celles-ci sont appelées `google
 Nous allons créer une instance EC2 qui a
 
 ```
-name         = "your name"
+name         = "{{YOUR_INSTANCE_NAME}}"
 machine_type = "e2-micro"
 ```
 
@@ -193,12 +193,10 @@ Vous pouvez également le voir dans GCP via l'interface utilisateur en allant su
 Si vous regardez dans votre répertoire de travail, vous verrez un fichier `terraform.tfstate`. Il est important de laisser ce fichier en place et de ne pas en modifier le contenu. Ce fichier est la façon dont terraform garde la trace de l'infrastructure qu'il gère.
 
 ## 03
+Ajoutez l'argument `count` à `google_compute_instance` pour créer 3 instances ec2.
 
-Add the `count` argument to `aws_instance` to create 3 ec2 instances
-
-Since you are going from 1 to 3 instances, when you run `terraform plan` you should see `Plan: 2 to add, 0 to change, 0 to destroy` since you have a net +2 in your instances.
-
-After running `terraform apply` and seeing that you were able to create 3 instances, lower the count back to 1.
+Puisque vous passez de 1 à 3 instances, lorsque vous exécutez `terraform plan`, vous devriez voir `Plan : 2 to add, 0 to change, 0 to destroy` puisque vous avez un net +2 dans vos instances.
+Après avoir exécuté `terraform apply` et vu que vous avez pu créer 3 instances, ramenez le compte à 1.
 
 ## 04
 
