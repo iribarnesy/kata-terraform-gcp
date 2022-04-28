@@ -123,7 +123,7 @@ provider "google" {
 }
 ```
 
-Ce bloc indique à Terraform que nous utilisons AWS et que nous allons déployer notre infrastructure dans `us-east-1-b`.
+Ce bloc indique à Terraform que nous utilisons GCP et que nous allons déployer notre infrastructure dans `us-central1-c`.
 
 Après avoir enregistré ce fichier, exécutez `terraform init`
 
