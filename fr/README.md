@@ -105,7 +105,7 @@ Terraform est à la fois constructif et destructif en fonction de ce qui se trou
 
 Si vous ne l'avez pas encore fait, créez un répertoire de travail dans lequel vous allez travailler sur ce Kata. Créez un nouveau fichier dans ce répertoire appelé `main.tf` et ouvrez ce fichier dans votre IDE.
 
-Dans ce fichier, nous allons ajouter notre [provider](https://www.terraform.io/docs/language/providers/index.html). Prenez un moment pour consulter les documents sur [Terraform Providers](https://www.terraform.io/docs/language/providers/index.html). Le concept important à saisir ici est que le fournisseur vous permet d'interagir entre Terraform et le service que vous utilisez, dans ce cas AWS.
+Dans ce fichier, nous allons ajouter notre [provider](https://www.terraform.io/docs/language/providers/index.html). Prenez un moment pour consulter les documents sur [Terraform Providers](https://www.terraform.io/docs/language/providers/index.html). Le concept important à saisir ici est que le fournisseur vous permet d'interagir entre Terraform et le service que vous utilisez, dans ce cas GCP.
 
 Nous allons maintenant ajouter le [GCP Terraform provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs) en ajoutant le bloc suivant à notre `main.tf`
 
@@ -117,8 +117,9 @@ terraform {
   }
 }
 provider "google" {
-  project     = "my-project-id"
-  region      = "us-east-1-b"
+  project     = "{{YOUR_PROJECT_ID}}"
+  region      = "us-central1"
+  zone        = "us-central1-c"
 }
 ```
 
@@ -136,24 +137,23 @@ Nous allons créer une instance EC2 qui a
 
 ```
 name         = "your name"
-machine_type = "e2-medium"
-zone         = "us-east-1-b"
+machine_type = "e2-micro"
 ```
 
 et avec les étiquettes suivantes
 
 ```
-User = "your name"
-project = "TerraformDemo"
+creator = "{{YOUR_NAME}}"
+project = "{{YOUR_PROJECT_NAME}}"
 ```
 
-Les labels `User` et `project` sont des tags personnalisés que nous utiliserons dans le cadre d'une bonne hygiène GCP, et peut être appliquée à la plupart des ressources GCP.
+Les labels `creator`, `environment` et `project` sont des labels personnalisés que nous utiliserons dans le cadre d'une bonne hygiène GCP, ils peuvent peut être appliquée à la plupart des ressources GCP. [Documentation relative aux labels GCP](https://cloud.google.com/compute/docs/labeling-resources#api)
 
 Pour créer votre instance, nous allons ajouter ce qui suit à `main.tf`. Aucun autre argument ou balise n'est nécessaire pour `01`.
 
 ```
 resource "google_compute_instance" "default" {
-  //TODO add name, machine type and zone
+  //TODO add name and machine type
 
   labels = {
     //TODO add labels
@@ -179,16 +179,16 @@ resource "google_compute_instance" "default" {
 Exécutez `terraform validate` pour valider que vous avez une syntaxe correcte. Exécutez `terraform plan` pour vous assurer que vous créez bien ce que vous pensez. Vous devriez voir `Plan : 1 pour ajouter, 0 pour modifier, 0 pour détruire` en bas de la commande. Lorsque vous êtes satisfait, vous pouvez lancer `terraform apply`. Vous verrez à nouveau votre plan, et si tout semble bon, vous pouvez taper `yes` pour commencer votre déploiement. Vous verrez des mises à jour toutes les 10 secondes vous indiquant que Terraform et GCP travaillent sur votre infrastructure. Selon la complexité de votre infrastructure, cela peut prendre plus ou moins de temps. Vous devriez voir le bloc ci-dessous pendant que votre infrastructure s'approvisionne et se complète.
 
 ```
-aws_instance.web: Creating...
-aws_instance.web: Still creating... [10s elapsed]
-aws_instance.web: Still creating... [20s elapsed]
+google_compute_instance.default: Creating...
+google_compute_instance.default: Still creating... [10s elapsed]
+
 ...
-aws_instance.web: Creation complete after 53s [id=i-04834830fa7d3d3e3]
+google_compute_instance.default: Creation complete after 15s [id=projects/subtle-builder-348511/zones/us-central1-c/instances/-instance]
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 
-Vous pouvez également le voir dans AWS via l'interface utilisateur en allant sur EC2 et en recherchant soit l'`id` qui a été affiché après la création, soit la valeur dans votre label `Name`.
+Vous pouvez également le voir dans GCP via l'interface utilisateur en allant sur EC2 et en recherchant soit l'`id` qui a été affiché après la création, soit la valeur dans votre label `Name`.
 
 Si vous regardez dans votre répertoire de travail, vous verrez un fichier `terraform.tfstate`. Il est important de laisser ce fichier en place et de ne pas en modifier le contenu. Ce fichier est la façon dont terraform garde la trace de l'infrastructure qu'il gère.
 
