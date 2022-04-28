@@ -5,6 +5,6 @@ terraform {
   }
 }
 provider "google" {
-  project     = "my-project-id"
-  region      = "us-east-1-b"
+  project     = // TODO add the id of your project
+  region      = "us-central1"
 }
