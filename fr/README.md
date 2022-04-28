@@ -30,8 +30,8 @@ Vérifier que la facturation a bien été mise en place sur le projet. Sélectio
 
 Assurez-vous que vous disposez des autorisations Compute Engine nécessaires sur votre compte utilisateur:
 
-compute.instance._
-compute.firewalls._
+`compute.instance.*`
+`compute.firewalls.*`
 
 [Accéder à la page IAM](https://console.cloud.google.com/iam-admin/iam?hl=fr&_ga=2.26325172.807002807.1651086738-997347237.1649762783&_gac=1.27728206.1650559456.Cj0KCQjwgYSTBhDKARIsAB8Kuku36Hk2k82u55xBcNxRZuEwWaaWKMf3eQJAJPWz86oC2T2Ipje-V_oaAisTEALw_wcB)
 
