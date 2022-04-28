@@ -136,7 +136,7 @@ Nous allons maintenant créer une instance EC2. Celles-ci sont appelées `google
 Nous allons créer une instance EC2 qui a
 
 ```
-name         = "your name"
+name         = "{{YOUR_INSTANCE_NAME}}"
 machine_type = "e2-micro"
 ```
 
