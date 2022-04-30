@@ -238,7 +238,7 @@ Maintenant, nous allons voir différentes façons de passer dynamiquement des pa
 
 Créez un nouveau fichier appelé `variables.tf`. Dans ce fichier, vous allez déclarer les variables que vous comptez utiliser. Dans notre cas, nous allons créer des variables pour `region`, `project_id` et `instance_count`.
 
-(En utilisant la documentation) (https://www.terraform.io/docs/language/values/variables.html) créons ces trois variables sans l'argument des valeurs par défaut.
+[En utilisant la documentation](https://www.terraform.io/docs/language/values/variables.html) créons ces trois variables sans l'argument des valeurs par défaut.
 
 Assurez-vous d'ajouter une description pour les trois variables. `region` et `project_id` serint de type `string` et `instance_count` de type `number`.
 
@@ -248,7 +248,7 @@ Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'en
 
 ## 08
 
-Since we are exclusively working in `us-east-1` lets go back to `variables.tf` and set that as the default value. We are also going to set the default value for `instance_count` to be 3 instances. When you run `terraform apply` you should no longer be asked for the region or how many instances you want.
+Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `variables.tf` et définissons cette valeur par défaut. Nous allons également définir la valeur par défaut de `instance_count` à 2, et celle de `project_id`. Lorsque vous exécutez `terraform apply`, on ne devrait plus vous demander la région, le nombre d'instances et le project id que vous souhaitez.
 
 ## 09
 
