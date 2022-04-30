@@ -7,18 +7,18 @@ terraform {
 
 provider "google" {
   project = "subtle-builder-348511"
-  region  = "us-central1"
-  zone    = "us-central1-c"
+  region  = "europe-west1"
+  zone    = "europe-west1-c"
 }
 
-resource "google_compute_instance" "default" {
-  name         = "terraform-instance"
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraformkata-ippon-instance"
   machine_type = "e2-micro"
 
   labels = {
-    creator     = "ippon"
-    environment = "dev"
-    project     = "terraformdemo"
+    creator = "ippon"
+    env     = "dev"
+    project = "terraformkata"
   }
 
   boot_disk {
@@ -29,15 +29,11 @@ resource "google_compute_instance" "default" {
 
   network_interface {
     network = "default"
-
-    access_config {
-      // Ephemeral public IP
-    }
   }
 }
 
 resource "google_compute_network" "vpc" {
   project                 = "subtle-builder-348511"
-  name                    = "vpc-network"
+  name                    = "terraformkata-ippon-vpc"
   auto_create_subnetworks = "true"
 }

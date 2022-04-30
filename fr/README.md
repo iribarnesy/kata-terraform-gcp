@@ -118,12 +118,12 @@ terraform {
 }
 provider "google" {
   project     = "{{YOUR_PROJECT_ID}}"
-  region      = "us-central1"
-  zone        = "us-central1-c"
+  region      = "europe-west1"
+  zone        = "europe-west1-c"
 }
 ```
 
-Ce bloc indique à Terraform que nous utilisons GCP et que nous allons déployer notre infrastructure dans `us-central1-c`.
+Ce bloc indique à Terraform que nous utilisons GCP et que nous allons déployer notre infrastructure dans `europe-west1-c`.
 
 Après avoir enregistré ce fichier, exécutez `terraform init`
 
@@ -183,7 +183,7 @@ google_compute_instance.default: Creating...
 google_compute_instance.default: Still creating... [10s elapsed]
 
 ...
-google_compute_instance.default: Creation complete after 15s [id=projects/subtle-builder-348511/zones/us-central1-c/instances/-instance]
+google_compute_instance.default: Creation complete after 15s [id=projects/subtle-builder-348511/zones/europe-west1-c/instances/-instance]
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
@@ -209,7 +209,7 @@ resource "google_compute_network" "vpc" {
 }
 ```
 
-`terraform apply` and validate that you see your vpc in the aws console
+`terraform apply` et vérifiez que vous voyez le vpc dans la console GCP (famille networking des produits GCP).
 
 ## 05
 
