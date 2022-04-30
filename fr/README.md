@@ -262,75 +262,75 @@ Exécutez `terraform destroy` pour nettoyer toutes les ressources que vous avez 
 
 ## 10
 
-Finally lets put all of this, as well as a few other services in to practice and create a very basic website. We use a lot of different services in this section. While it is not important to know exactly what each service does and how they work together to create our webserver, I have provided a small blurb for some of the less commonly used services so you have some context. The important part of this exercise it to get some experience building out your terraform file.
+Enfin, mettons tout cela, ainsi que quelques autres services, en pratique et créons un site Web très basique. Nous utilisons un grand nombre de services différents dans cette section. Bien qu'il ne soit pas important de savoir exactement ce que fait chaque service et comment ils travaillent ensemble pour créer notre serveur web, j'ai fourni un petit résumé pour certains des services les moins utilisés afin que vous ayez un certain contexte. La partie la plus importante de cet exercice est d'acquérir une certaine expérience dans la construction de votre fichier terraform.
 
-Create a new directory and a new `main.tf` and add the aws provider. Make suer you run `terraform init` in the new directory
+Créez un nouveau répertoire et un nouveau `main.tf` et ajoutez le fournisseur aws. Assurez-vous de lancer `terraform init` dans le nouveau répertoire.
 
-1. Create a VPC with argument `cidr_block = "10.0.0.0/16"` and your tags
-2. Create an `aws_internet_gateway` with argument `vpc_id = YOUR_VPC_ID` and your tags. [Internet gateway docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway). Internet gateway allows your VPC to communicate with the internet
-3. Create an `aws_route_table`. A route table tells AWS how to route network traffic from our subnet. in this case we are going to route all IPv4 and IPv6 traffic to our internet gateway
+1. Créez un VPC avec l'argument `cidr_block = "10.0.0.0/16"` et vos tags.
+2. Créez une `aws_internet_gateway` avec l'argument `vpc_id = YOUR_VPC_ID` et vos tags. [Docs sur la passerelle Internet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway). La passerelle Internet permet à votre VPC de communiquer avec l'Internet.
+3. Créez une `aws_route_table`. Une table de route indique à AWS comment router le trafic réseau depuis notre sous-réseau. Dans ce cas, nous allons router tout le trafic IPv4 et IPv6 vers notre passerelle Internet.
 
 ```
-resource "aws_route_table" "route-table" {
+ressource "aws_route_table" "route-table" {
   vpc_id = //TODO VPC id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = "0.0.0.0/0" (en anglais)
     gateway_id = //TODO aws_internet_gateway id
   }
 
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = //TODO aws_internet_gateway id
+    gateway_id = //TODO aws_internet_gateway id
   }
   //TODO Tags
 }
 ```
 
-4. Create a subnet with arguments `vpc_id = YOUR_VPC_ID` `cidr_block = "10.0.1.0/24"` and `availability_zone = "us-east-1a"` and your tags
-5. Associate your subnet with your route table
+4. Créez un sous-réseau avec les arguments `vpc_id = VOTRE_VPC_ID` `cidr_block = "10.0.1.0/24"` et `availability_zone = "us-east-1a"` et vos balises
+5. Associez votre sous-réseau à votre table de route
 
 ```
-resource "aws_route_table_association" "a" {
+ressource "aws_route_table_association" "a" {
 subnet_id = //TODO subnet id
 route_table_id = //TODO aws_route_table id
 }
 ```
 
-6. Create a security group with ports 443, 80, and 22 open and your tags. We are using this security group to allow traffic from any IP address to enter through the HTTP, HTTPS, or SSH ports
+6. Créez un groupe de sécurité avec les ports 443, 80 et 22 ouverts et vos balises. Nous utilisons ce groupe de sécurité pour permettre au trafic provenant de n'importe quelle adresse IP d'entrer par les ports HTTP, HTTPS ou SSH.
 
 ```
-resource "aws_security_group" "allow_web" {
-  name        = "allow_web_traffic"
-  description = "Allow Web inbound traffic"
-  vpc_id      = //TODO vpc id
+ressource "aws_security_group" "allow_web" {
+  name = "allow_web_traffic" (nom)
+  description = "Autoriser le trafic Web entrant".
+  vpc_id = //TODO vpc id
 
   ingress {
-    description = "HTTPS"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
+    description = "HTTPS
+    from_port = 443
+    to_port = 443
+    protocole = "tcp
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    description = "HTTP
+    from_port = 80
+    to_port = 80
+    protocole = "tcp
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    description = "SSH
+    from_port = 22
+    to_port = 22
+    protocole = "tcp
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port = 0
+    to_port = 0
+    protocole = "-1
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -338,40 +338,40 @@ resource "aws_security_group" "allow_web" {
 }
 ```
 
-7. Create a network interface. A network interface can be thought of as a virtual network card.
+7. Créez une interface réseau. Une interface réseau peut être considérée comme une carte réseau virtuelle.
 
 ```
-resource "aws_network_interface" "web-server-nic" {
-  subnet_id       = //TODO subnet id
-  private_ips     = ["10.0.1.50"]
-  security_groups = [//TODO security group id (note keep it in the square brackets as this can be a list)]
+ressource "aws_network_interface" "web-server-nic" {
+  subnet_id = //identification du sous-réseau TODO
+  private_ips = [ "10.0.1.50" ].
+  security_groups = [//TODO identifiant du groupe de sécurité (notez qu'il doit rester entre crochets car il peut s'agir d'une liste)].
   //TODO tags
 }
 ```
 
-8. Assign an elastic IP. This section introduces the `depends_on` argument. This usually terraform is good at figuring out the provisioning order, but sometimes it needs some help. [This is usually clearly defined in the docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) "EIP may require IGW to exist prior to association. Use `depends_on` to set an explicit dependency on the IGW." Note: `depends_on` takes a list of dependencies, not IDs. For example, to set an explicit dependency for the security group we created in step 6 we would do `depends_on = [aws_security_group.allow_web]`. Assigning an elastic IP exposes the EC2 instance so that we can access it from the internet.
+8. Attribuez une IP élastique. Cette section introduit l'argument `depends_on`. En général, terraform est capable de déterminer l'ordre de provisionnement, mais il a parfois besoin d'aide. (Ceci est généralement clairement défini dans la documentation)(https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) "L'EIP peut exiger que l'IGW existe avant l'association. Utilisez `depends_on` pour définir une dépendance explicite sur l'IGW." Remarque : `depends_on` prend une liste de dépendances, et non des identifiants. Par exemple, pour définir une dépendance explicite pour le groupe de sécurité que nous avons créé à l'étape 6, nous ferions `depends_on = [aws_security_group.allow_web]`. L'attribution d'une IP élastique expose l'instance EC2 afin que nous puissions y accéder depuis Internet.
 
 ```
-resource "aws_eip" "one" {
-  vpc                       = true
-  network_interface         = //TODO network interface id
-  associate_with_private_ip = "10.0.1.50"
-  depends_on                = [//TODO internet gateway (Not the ID)]
+ressource "aws_eip" "one" {
+  vpc = true
+  network_interface = //ID de l'interface réseau TODO
+  associate_with_private_ip = "10.0.1.50" (en anglais)
+  depends_on = [//TODO passerelle internet (Pas l'ID)]
 //TODO tags
 }
 ```
 
-9. Finally we will create our EC2 instance.
+9. Enfin, nous allons créer notre instance EC2.
 
 ```
-resource "aws_instance" "web-server-instance" {
-  ami               = "ami-085925f297f89fce1"
-  instance_type     = "t2.micro"
-  availability_zone = "us-east-1a"
+ressource "aws_instance" "web-server-instance" {
+  ami = "ami-085925f297f89fce1
+  Instance_type = "t2.micro
+  availability_zone = "us-east-1a" (zone de disponibilité)
 
   network_interface {
-    device_index         = 0
-    network_interface_id = //TODO network interface id
+    device_index = 0
+    network_interface_id = //Identification de l'interface réseau TODO
   }
 
   user_data = <<-EOF
@@ -379,29 +379,29 @@ resource "aws_instance" "web-server-instance" {
                 sudo apt update -y
                 sudo apt install apache2 -y
                 sudo systemctl start apache2
-                sudo bash -c 'echo I know some Terraform! > /var/www/html/index.html'
+                sudo bash -c 'echo I know some Terraform ! > /var/www/html/index.html'
                 EOF
 //TODO Tags
 }
 ```
 
-10. Finally, terraform is able to print out some variable that it generates during its run such as an ip address, or instance id. We will add a few outputs at the bottom of our file
+10. Enfin, terraform est capable d'imprimer une variable qu'il génère pendant son exécution, comme une adresse IP ou un identifiant d'instance. Nous allons ajouter quelques sorties au bas de notre fichier
 
 ```
-output "server_public_ip" {
+sortie "server_public_ip" {
   value = aws_eip.one.public_ip
 }
 output "server_private_ip" {
-  value = aws_instance.web-server-instance.private_ip
+  valeur = aws_instance.web-server-instance.private_ip
 }
 output "server_id" {
-  value = aws_instance.web-server-instance.id
+  valeur = aws_instance.web-server-instance.id
 }
 ```
 
-11. If everything went well, when you run `terraform apply` you should be able to create a web server. When it finishes it should return you a public ip address you can go to, which should show you your new website.
+11. Si tout s'est bien passé, lorsque vous lancez `terraform apply`, vous devriez être en mesure de créer un serveur web. Quand il aura terminé, il devrait vous renvoyer une adresse IP publique sur laquelle vous pourrez vous rendre, et qui devrait vous montrer votre nouveau site web.
 
-12. When you are done, run `terraform destroy` to clean up everything
+12. Quand vous avez terminé, exécutez `terraform destroy` pour tout nettoyer.
 
 ## Post
 
