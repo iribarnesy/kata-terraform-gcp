@@ -13,6 +13,15 @@ locals {
   username = "ippon"
 }
 
+#                   __ _                       _   _             
+#                  / _(_)                     | | (_)            
+#   ___ ___  _ __ | |_ _  __ _ _   _ _ __ __ _| |_ _  ___  _ __  
+#  / __/ _ \| '_ \|  _| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \ 
+# | (_| (_) | | | | | | | (_| | |_| | | | (_| | |_| | (_) | | | |
+#  \___\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
+#                         __/ |                                  
+#                        |___/                                   
+#
 terraform {
   required_providers {
     google = {
@@ -26,6 +35,13 @@ provider "google" {
   zone    = "${local.region}-c"
 }
 
+#  _           _                       
+# (_)         | |                      
+#  _ _ __  ___| |_ __ _ _ __   ___ ___ 
+# | | '_ \/ __| __/ _` | '_ \ / __/ _ \
+# | | | | \__ \ || (_| | | | | (_|  __/
+# |_|_| |_|___/\__\__,_|_| |_|\___\___|
+#                                      
 resource "google_compute_instance" "vm_instance" {
   name         = "${local.project_name}-${local.username}-instance"
   machine_type = "e2-micro"
@@ -49,6 +65,13 @@ resource "google_compute_instance" "vm_instance" {
   }
 }
 
+#             _                      _    
+#            | |                    | |   
+#  _ __   ___| |___      _____  _ __| | __
+# | '_ \ / _ \ __\ \ /\ / / _ \| '__| |/ /
+# | | | |  __/ |_ \ V  V / (_) | |  |   < 
+# |_| |_|\___|\__| \_/\_/ \___/|_|  |_|\_\
+#                                         
 resource "google_compute_network" "vpc" {
   project                 = local.project_id
   name                    = "${local.project_name}-${local.username}-vpc"
