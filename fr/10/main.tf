@@ -66,3 +66,46 @@ resource "google_compute_address" "static_ip" {
   name = "${local.project_name}-${local.username}-static-ip"
 }
 
+#                           _ _         
+#                          (_) |        
+#  ___  ___  ___ _   _ _ __ _| |_ _   _ 
+# / __|/ _ \/ __| | | | '__| | __| | | |
+# \__ \  __/ (__| |_| | |  | | |_| |_| |
+# |___/\___|\___|\__,_|_|  |_|\__|\__, |
+#                                  __/ |
+#                                 |___/ 
+
+# Allow HTTP(S) from everywhere
+resource "google_compute_firewall" "everywhere_to_http" {
+  name    = "${local.project_name}-${local.username}-ingress-allow-everywhere-to-http"
+  network = google_compute_network.vpc.name
+  description = "Allow HTTP(S) from everywhere"
+  
+  direction = "INGRESS"
+  priority  = 1000
+
+  # Everywhere
+  source_ranges = ["0.0.0.0/0"]
+
+  allow {
+    protocol = "tcp"
+    ports    = [80, 443]
+  }
+}
+# Allow SSH connection
+resource "google_compute_firewall" "iap_to_ssh" {
+  name    = "${local.project_name}-${local.username}-ingress-allow-iap-to-ssh"
+  network = google_compute_network.vpc.name
+  description = "Allow SSH from IAP sources"
+
+  direction = "INGRESS"
+  priority  = 1000
+
+  # Cloud IAP's TCP forwarding netblock
+  source_ranges = ["35.235.240.0/20"]
+
+  allow {
+    protocol = "tcp"
+    ports    = [22]
+  }
+}
