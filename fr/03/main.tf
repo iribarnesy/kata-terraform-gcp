@@ -5,21 +5,21 @@ terraform {
   }
 }
 provider "google" {
-  project     = "subtle-builder-348511"
-  region      = "us-central1"
-  zone = "us-central1-c"
+  project = "subtle-builder-348511"
+  region  = "us-central1"
+  zone    = "us-central1-c"
 }
 
 resource "google_compute_instance" "default" {
-  name         = "terraform-instance"
+  name         = "terraform-instance-${count.index}"
   machine_type = "e2-micro"
-  count= 3
+  count        = 3
 
   labels = {
-    creator = "ippon"
-    environment = "dev" 
-    project = "terraformdemo"
-  }  
+    creator     = "ippon"
+    environment = "dev"
+    project     = "terraformdemo"
+  }
 
   boot_disk {
     initialize_params {

@@ -147,7 +147,7 @@ creator = "{{YOUR_NAME}}"
 project = "{{YOUR_PROJECT_NAME}}"
 ```
 
-Les labels `creator`, `environment` et `project` sont des labels personnalisés que nous utiliserons dans le cadre d'une bonne hygiène GCP, ils peuvent peut être appliquée à la plupart des ressources GCP. [Documentation relative aux labels GCP](https://cloud.google.com/compute/docs/labeling-resources#api)
+Les labels `creator`, `environment` et `project` sont des labels personnalisés que nous utiliserons dans le cadre d'une bonne hygiène GCP, ils peuvent peut être appliquée à la plupart des ressources GCP. [Documentation relative aux labels GCP](https://cloud.google.com/compute/docs/labeling-resources)
 
 Pour créer votre instance, nous allons ajouter ce qui suit à `main.tf`. Aucun autre argument ou balise n'est nécessaire pour `01`.
 
@@ -193,19 +193,19 @@ Vous pouvez également le voir dans GCP via l'interface utilisateur en allant su
 Si vous regardez dans votre répertoire de travail, vous verrez un fichier `terraform.tfstate`. Il est important de laisser ce fichier en place et de ne pas en modifier le contenu. Ce fichier est la façon dont terraform garde la trace de l'infrastructure qu'il gère.
 
 ## 03
-Ajoutez l'argument `count` à `google_compute_instance` pour créer 3 instances ec2.
+
+Ajoutez l'argument `count` à `google_compute_instance` pour créer 3 instances ec2. **Attention chaque instance doit avoir un nom unique**, le count.index permet d'avoir l'index de chaque instance.
 
 Puisque vous passez de 1 à 3 instances, lorsque vous exécutez `terraform plan`, vous devriez voir `Plan : 2 to add, 0 to change, 0 to destroy` puisque vous avez un net +2 dans vos instances.
 Après avoir exécuté `terraform apply` et vu que vous avez pu créer 3 instances, ramenez le compte à 1.
 
 ## 04
 
-Now we are going to create a basic VPC. [Using the docs](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest) create a VPC with `cidr_block = "10.0.0.0/16"` as well as adding all of the same tags we added to the ec2 instance. This block can go below the block we added to create the ec2.
+Nous allons maintenant créer un VPC de base. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network). Ce bloc peut aller en dessous du bloc que nous avons ajouté pour créer l'ec2.
 
 ```
-resource "aws_vpc" "main" {
-  //TODO add cidr block
-  //TODO add tags
+resource "google_compute_network" "vpc_network" {
+  //TODO add required field
 }
 ```
 

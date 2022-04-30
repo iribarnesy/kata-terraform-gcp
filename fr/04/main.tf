@@ -6,9 +6,9 @@ terraform {
 }
 
 provider "google" {
-  project     = "subtle-builder-348511"
-  region      = "us-central1"
-  zone        = "us-central1-c"
+  project = "subtle-builder-348511"
+  region  = "us-central1"
+  zone    = "us-central1-c"
 }
 
 resource "google_compute_instance" "default" {
@@ -16,10 +16,10 @@ resource "google_compute_instance" "default" {
   machine_type = "e2-micro"
 
   labels = {
-    creator = "ippon"
-    environment = "dev" 
-    project = "terraformdemo"
-  }  
+    creator     = "ippon"
+    environment = "dev"
+    project     = "terraformdemo"
+  }
 
   boot_disk {
     initialize_params {
@@ -38,6 +38,6 @@ resource "google_compute_instance" "default" {
 
 resource "google_compute_network" "vpc_network" {
   project                 = "subtle-builder-348511"
-  name                    = "terraform-network"
+  name                    = "vpc-network"
   auto_create_subnetworks = "true"
 }
