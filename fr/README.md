@@ -204,7 +204,7 @@ Après avoir exécuté `terraform apply` et vu que vous avez pu créer 3 instanc
 Nous allons maintenant créer un VPC de base. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network). Ce bloc peut aller en dessous du bloc que nous avons ajouté pour créer l'ec2.
 
 ```
-resource "google_compute_network" "vpc_network" {
+resource "google_compute_network" "vpc" {
   //TODO add required field
 }
 ```
@@ -213,37 +213,38 @@ resource "google_compute_network" "vpc_network" {
 
 ## 05
 
-Now we will create a subnet. [Using the docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) we are going to create a subnet with `cidr_block = "10.0.1.0/24"`. Since subnets are tied to a vpc, we will use the id of the vpc we created in `vpc_id` argument. This can be done by referencing a variable that is storing the id of the vpc we created. `aws_vpc.main.id` will fill in as the if of the `main` vpc that we created in `04`. Be sure to add your tags as well.
+Maintenant nous allons créer un subnet. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) nous allons créer un subnet avec `ip_cidr_range = "10.0.1.0/24"`. Puisque les subnets sont liés à un vpc, nous allons utiliser l'id du vpc que nous avons créé dans l'argument `network`. Ceci peut être fait en référençant une variable qui stocke l'id du vpc que nous avons créé. `vpc.id` sera rempli comme l'id du vpc `main` que nous avons créé dans `04`. N'oubliez pas d'ajouter vos balises également.
 
 ```
-resource "aws_subnet" "main_subnet" {
-    //TODO vpc_id
-    //TODO cidr_block
-    //TODO tags
+resource "google_compute_subnetwork" "vpc_subnet" {
+  // TODO name
+  // TODO ip_cidr_range
+  // TODO region
+  // TODO network
 }
 ```
 
-After you run `terraform apply`, if you look in the console at your new subnet, you should see that it is part of the vpc you created.
+Après avoir exécuté `terraform apply`, si vous regardez dans la console votre nouveau subnet, vous devriez voir qu'il fait partie du vpc que vous avez créé.
 
 ## 06
 
-Using what you just learned about referencing a variable, edit your ec2 configuration with the `subnet_id` argument to tie your subnet to your ec2 instance.
+En utilisant ce que vous venez d'apprendre sur le référencement d'une ressource, modifiez dans votre configuration `compute_instance` pour lier votre vpc et votre subnet à votre instance.
 
-To validate that your subnet is now tied to your ec2, go to the ec2 instance in the console, and validate that you see your subnet in the security tab.
+Pour valider que votre subnet est maintenant lié à votre ec2, allez à l'instance ec2 dans la console, et validez que vous voyez votre subnet dans l'onglet sécurité.
 
 ## 07
 
-Now we are going to look at a few different ways to dynamically pass parameters in to your terraform file.
+Maintenant, nous allons voir différentes façons de passer dynamiquement des paramètres dans votre fichier terraform.
 
-Create a new file called `variables.tf`. In this file you declare what variables you plan on using. In our case lets create a variable for `aws_region` and `instance_count`
+Créez un nouveau fichier appelé `variables.tf`. Dans ce fichier, vous déclarez les variables que vous comptez utiliser. Dans notre cas, nous allons créer une variable pour `aws_region` et `instance_count`.
 
-[Using the documentation](https://www.terraform.io/docs/language/values/variables.html) lets create both of these variables without the default values argument
+(En utilisant la documentation) (https://www.terraform.io/docs/language/values/variables.html) créons ces deux variables sans l'argument des valeurs par défaut.
 
-Be sure to add a description for both variables. `aws_region` will be type `string` and `instance_count` will be type `number`
+Assurez-vous d'ajouter une description pour les deux variables. `aws_region` sera de type `string` et `instance_count` de type `number`.
 
-Before we try and apply this change, we also need to update our `main.tf` to reference these variables. This can be done by putting `var.aws_region` or `var.instance_count` in `main.tf`. Add these to the `aws_region` argument in the provider, and `instance_count` in the ec2 configuration.
+Avant d'essayer d'appliquer ce changement, nous devons également mettre à jour notre fichier `main.tf` pour référencer ces variables. Cela peut être fait en mettant `var.aws_region` ou `var.instance_count` dans `main.tf`. Ajoutez-les à l'argument `aws_region` dans le fournisseur, et `instance_count` dans la configuration ec2.
 
-Now when you run `terraform apply` you will be asked to enter a value for `aws_region` and `instance_count`. Since we are using a hard coded ami, your region should be `us-east-1`. For your instance count, lets create 5 instances. All of these instances will tie to your same subnet and vpc.
+Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'entrer une valeur pour `aws_region` et `instance_count`. Puisque nous utilisons un ami codé en dur, votre région devrait être `us-east-1`. Pour le nombre d'instances, nous allons créer 5 instances. Toutes ces instances seront reliées au même sous-réseau et au même vpc.
 
 ## 08
 
