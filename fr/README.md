@@ -238,17 +238,17 @@ Maintenant, nous allons voir différentes façons de passer dynamiquement des pa
 
 Créez un nouveau fichier appelé `variables.tf`. Dans ce fichier, vous déclarez les variables que vous comptez utiliser. Dans notre cas, nous allons créer une variable pour `aws_region` et `instance_count`.
 
-(En utilisant la documentation) (https://www.terraform.io/docs/language/values/variables.html) créons ces deux variables sans l'argument des valeurs par défaut.
+[En utilisant la documentation](https://www.terraform.io/docs/language/values/variables.html) créons ces deux variables sans l'argument des valeurs par défaut.
 
 Assurez-vous d'ajouter une description pour les deux variables. `aws_region` sera de type `string` et `instance_count` de type `number`.
 
 Avant d'essayer d'appliquer ce changement, nous devons également mettre à jour notre fichier `main.tf` pour référencer ces variables. Cela peut être fait en mettant `var.aws_region` ou `var.instance_count` dans `main.tf`. Ajoutez-les à l'argument `aws_region` dans le fournisseur, et `instance_count` dans la configuration ec2.
 
-Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'entrer une valeur pour `aws_region` et `instance_count`. Puisque nous utilisons un ami codé en dur, votre région devrait être `us-east-1`. Pour le nombre d'instances, nous allons créer 5 instances. Toutes ces instances seront reliées au même sous-réseau et au même vpc.
+Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'entrer une valeur pour `aws_region` et `instance_count`. Puisque nous utilisons un ami codé en dur, votre région devrait être `europe-west1`. Pour le nombre d'instances, nous allons créer 5 instances. Toutes ces instances seront reliées au même sous-réseau et au même vpc.
 
 ## 08
 
-Since we are exclusively working in `us-east-1` lets go back to `variables.tf` and set that as the default value. We are also going to set the default value for `instance_count` to be 3 instances. When you run `terraform apply` you should no longer be asked for the region or how many instances you want.
+Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `variables.tf` et définissons cette valeur par défaut. Nous allons également définir la valeur par défaut de `instance_count` à 2, `project_id`. Lorsque vous exécutez `terraform apply`, on ne devrait plus vous demander la région, le nombre d'instances et le project id que vous souhaitez.
 
 ## 09
 
