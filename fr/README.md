@@ -349,8 +349,8 @@ output "instance_id" {
 
 8. Quand vous avez terminé, exécutez `terraform destroy` pour tout nettoyer.
 
-## Post
+## Conclusion
 
-Congratulations. You completed the Terraform kata. This kata was small sample of what terraform can do. We looked exclusively at the AWS provider, but [there are providers for every major cloud service as well](https://registry.terraform.io/browse/providers).
+Félicitations ! Vous avez terminé le kata Terraform. Ce kata était un petit échantillon de ce que Terraform peut faire. Nous avons examiné exclusivement le fournisseur GCP, mais [il existe également des fournisseurs pour tous les principaux services de cloud](https://registry.terraform.io/browse/providers).
 
-Any feedback you have on the Kata is appreciated. Please reach out on slack if you wish to share privately. If you have any improvements that could make this kata better, please open a pull request.
+Tout commentaire que vous avez sur le kata est apprécié. Si vous avez des améliorations qui pourraient rendre ce kata meilleur, s'il vous plaît ouvrez une pull request.
