@@ -85,7 +85,7 @@ Exécutez la commande suivante et assurez-vous que vous êtes au moins sur la ve
 
 `terraform --version`
 
-## 00
+## 00 - les commandes
 
 Avant de commencer, il y a quelques concepts et commandes utiles que vous devez connaître.
 
@@ -101,7 +101,7 @@ Terraform est à la fois constructif et destructif en fonction de ce qui se trou
 
 `terraform destroy` nettoiera toute l'infrastructure définie dans le fichier Terraform.
 
-## 01
+## 01 - initialisation
 
 Si vous ne l'avez pas encore fait, créez un répertoire de travail dans lequel vous allez travailler sur ce Kata. Créez un nouveau fichier dans ce répertoire appelé `main.tf` et ouvrez ce fichier dans votre IDE.
 
@@ -129,7 +129,7 @@ Après avoir enregistré ce fichier, exécutez `terraform init`
 
 [Terraform init](https://www.terraform.io/docs/cli/commands/init.html) initialise votre répertoire de travail avec quelques fichiers et répertoires cachés dont Terraform a besoin.
 
-## 02
+## 02 - création d'une instance minimale
 
 Nous allons maintenant créer une instance EC2. Celles-ci sont appelées `google_compute_instance` dans Terraform. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance), nous pouvons voir qu'il existe de nombreux champs pour tout ce que vous pouvez faire avec votre instance, mais nous allons commencer par les bases.
 
@@ -192,14 +192,14 @@ Vous pouvez également le voir dans GCP via l'interface utilisateur en allant su
 
 Si vous regardez dans votre répertoire de travail, vous verrez un fichier `terraform.tfstate`. Il est important de laisser ce fichier en place et de ne pas en modifier le contenu. Ce fichier est la façon dont terraform garde la trace de l'infrastructure qu'il gère.
 
-## 03
+## 03 - Création de plusieurs instances
 
 Ajoutez l'argument `count` à `google_compute_instance` pour créer 3 instances ec2. **Attention chaque instance doit avoir un nom unique**, le count.index permet d'avoir l'index de chaque instance.
 
 Puisque vous passez de 1 à 3 instances, lorsque vous exécutez `terraform plan`, vous devriez voir `Plan : 2 to add, 0 to change, 0 to destroy` puisque vous avez un net +2 dans vos instances.
 Après avoir exécuté `terraform apply` et vu que vous avez pu créer 3 instances, ramenez le compte à 1.
 
-## 04
+## 04 - Création d'un VPC
 
 Nous allons maintenant créer un VPC de base. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network). Ce bloc peut aller en dessous du bloc que nous avons ajouté pour créer l'ec2.
 
@@ -211,7 +211,7 @@ resource "google_compute_network" "vpc" {
 
 `terraform apply` et vérifiez que vous voyez le vpc dans la console GCP (famille networking des produits GCP).
 
-## 05
+## 05 - Création d'un subnet
 
 Maintenant nous allons créer un subnet. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) nous allons créer un subnet avec `ip_cidr_range = "10.0.1.0/24"`. Puisque les subnets sont liés à un vpc, nous allons utiliser l'id du vpc que nous avons créé dans l'argument `network`. Ceci peut être fait en référençant une variable qui stocke l'id du vpc que nous avons créé. `vpc.id` sera rempli comme l'id du vpc `main` que nous avons créé dans `04`. N'oubliez pas d'ajouter vos balises également.
 
@@ -226,13 +226,13 @@ resource "google_compute_subnetwork" "vpc_subnet" {
 
 Après avoir exécuté `terraform apply`, si vous regardez dans la console votre nouveau subnet, vous devriez voir qu'il fait partie du vpc que vous avez créé.
 
-## 06
+## 06 - Liaison de l'instance au sous-réseau
 
 En utilisant ce que vous venez d'apprendre sur le référencement d'une ressource, modifiez dans votre configuration `compute_instance` pour lier votre vpc et votre subnet à votre instance.
 
 Pour valider que votre subnet est maintenant lié à votre ec2, allez à l'instance ec2 dans la console, et validez que vous voyez votre subnet dans l'onglet sécurité.
 
-## 07
+## 07 - Variabiliser
 
 Maintenant, nous allons voir différentes façons de passer dynamiquement des paramètres dans votre fichier terraform.
 
@@ -246,11 +246,11 @@ Avant d'essayer d'appliquer ce changement, nous devons également mettre à jour
 
 Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'entrer des valeurs pour `region`, `project_id` et `instance_count`. Pour le nombre d'instances, nous allons créer 2 instances. Toutes ces instances seront reliées au même sous-réseau et au même vpc.
 
-## 08
+## 08 - Valeurs par défaut des variables
 
 Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `variables.tf` et définissons cette valeur par défaut. Nous allons également définir la valeur par défaut de `instance_count` à 2, et celle de `project_id`. Lorsque vous exécutez `terraform apply`, on ne devrait plus vous demander la région, le nombre d'instances et le project id que vous souhaitez.
 
-## 09
+## 09 - Ajout d'un fichier de configuration des variables
 
 Maintenant que nous pouvons utiliser des variables, nous ne voulons pas avoir à entrer des valeurs au moment de l'exécution, et nous ne voulons pas non plus être toujours liés aux valeurs par défaut. Nous allons créer un nouveau fichier appelé `terraform.tfvars`. Alors que `main.tf` vous permet de définir des variables, `terraform.tfvars` est l'endroit où vous pouvez définir leur valeur.
 
