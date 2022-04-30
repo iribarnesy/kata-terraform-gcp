@@ -260,148 +260,94 @@ Puisque nous utilisons le nom de fichier de variable par défaut, nous n'avons p
 
 Exécutez `terraform destroy` pour nettoyer toutes les ressources que vous avez créées.
 
-## 10
+## 10 - Déployer un site web minimal
 
-Enfin, mettons tout cela, ainsi que quelques autres services, en pratique et créons un site Web très basique. Nous utilisons un grand nombre de services différents dans cette section. Bien qu'il ne soit pas important de savoir exactement ce que fait chaque service et comment ils travaillent ensemble pour créer notre serveur web, j'ai fourni un petit résumé pour certains des services les moins utilisés afin que vous ayez un certain contexte. La partie la plus importante de cet exercice est d'acquérir une certaine expérience dans la construction de votre fichier terraform.
+Enfin, mettons tout cela, ainsi que quelques autres services, en pratique et créons un site Web très basique. La partie la plus importante de cet exercice est d'acquérir une certaine expérience dans la construction de votre fichier terraform.
 
-Créez un nouveau répertoire et un nouveau `main.tf` et ajoutez le fournisseur aws. Assurez-vous de lancer `terraform init` dans le nouveau répertoire.
+Créez un nouveau répertoire et un nouveau `main.tf` et ajoutez le fournisseur GCP. Assurez-vous de lancer `terraform init` dans le nouveau répertoire.
 
-1. Créez un VPC avec l'argument `cidr_block = "10.0.0.0/16"` et vos tags.
-2. Créez une `aws_internet_gateway` avec l'argument `vpc_id = YOUR_VPC_ID` et vos tags. [Docs sur la passerelle Internet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway). La passerelle Internet permet à votre VPC de communiquer avec l'Internet.
-3. Créez une `aws_route_table`. Une table de route indique à AWS comment router le trafic réseau depuis notre sous-réseau. Dans ce cas, nous allons router tout le trafic IPv4 et IPv6 vers notre passerelle Internet.
+1. Créez un VPC, et un subnet.
+2. Créez une IP externe.
+
+Ajoutez une `google_compute_address`, pour créer une ip static.[Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_address)
 
 ```
-ressource "aws_route_table" "route-table" {
-  vpc_id = //TODO VPC id
-
-  route {
-    cidr_block = "0.0.0.0/0" (en anglais)
-    gateway_id = //TODO aws_internet_gateway id
-  }
-
-  route {
-    ipv6_cidr_block = "::/0"
-    gateway_id = //TODO aws_internet_gateway id
-  }
-  //TODO Tags
+resource "google_compute_address" "vpn_static_ip" {
+  name = "{{YOUR_PROJECT_NAME}}-{{YOUR_USERNAME}}-static-ip"
 }
 ```
-
-4. Créez un sous-réseau avec les arguments `vpc_id = VOTRE_VPC_ID` `cidr_block = "10.0.1.0/24"` et `availability_zone = "us-east-1a"` et vos balises
-5. Associez votre sous-réseau à votre table de route
+3. (Optionnel) Créez une règle de firewall qui vous permettra de vous connecter en SSH à la machine. Ajoutez une ressource `google_compute_firewall` pour créer une règle de firewall. Le service IAP de GCP permet de se connecter de manière sécurisée, en SSH, à une instance dans un subnet privé. Pour faire cela il faut néanmoins autoriser les IPs du service IAP (un bloc CIDR fixé en dur).
 
 ```
-ressource "aws_route_table_association" "a" {
-subnet_id = //TODO subnet id
-route_table_id = //TODO aws_route_table id
+resource "google_compute_firewall" "iap_to_ssh" {
+  name    = "{{YOUR_PROJECT_NAME}}-{{YOUR_USERNAME}}-ingress-allow-iap-to-ssh"
+  network = # TODO: add VPC **name**
+  description = "Allow SSH from IAP sources"
+
+  direction = "INGRESS"
+  priority  = 1000
+
+  # Cloud IAP's TCP forwarding netblock
+  source_ranges = ["35.235.240.0/20"]
+
+  allow {
+    protocol = "tcp"
+    ports    = [22]
+  }
 }
 ```
+4. De la même manière, autorisez la connexion à votre instance depuis internet. Le bloc CIDR pour internet est `0.0.0.0/0`. La connexion de votre navigateur se fait en TCP sur le port 80.
 
-6. Créez un groupe de sécurité avec les ports 443, 80 et 22 ouverts et vos balises. Nous utilisons ce groupe de sécurité pour permettre au trafic provenant de n'importe quelle adresse IP d'entrer par les ports HTTP, HTTPS ou SSH.
+5. Enfin, nous allons créer notre instance. Nous allons relier, le subnet à la network interface et surtout associer une ip externe à notre instance.
 
-```
-ressource "aws_security_group" "allow_web" {
-  name = "allow_web_traffic" (nom)
-  description = "Autoriser le trafic Web entrant".
-  vpc_id = //TODO vpc id
+Aussi, nous allons insérer un script qui se lancera au démarrage afin que l'instance lance un serveur Apache qui servira une page web statique.
+Le script doit être renseigné avec l'attribut `metadata_startup_script`.
 
-  ingress {
-    description = "HTTPS
-    from_port = 443
-    to_port = 443
-    protocole = "tcp
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description = "HTTP
-    from_port = 80
-    to_port = 80
-    protocole = "tcp
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    description = "SSH
-    from_port = 22
-    to_port = 22
-    protocole = "tcp
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocole = "-1
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-//TODO Tags
-}
-```
-
-7. Créez une interface réseau. Une interface réseau peut être considérée comme une carte réseau virtuelle.
+Le texte HTML de la page peut être écrit dans un fichier séparé qui sera chargé en utilisant la commande `file("filepath.html")` de Terraform. (Vous pouvez par exemple chercher un gif sur [giphy](https://giphy.com/), puis cliquer sur "Embed" pour avoir un code HTML d'intégration)
 
 ```
-ressource "aws_network_interface" "web-server-nic" {
-  subnet_id = //identification du sous-réseau TODO
-  private_ips = [ "10.0.1.50" ].
-  security_groups = [//TODO identifiant du groupe de sécurité (notez qu'il doit rester entre crochets car il peut s'agir d'une liste)].
-  //TODO tags
-}
-```
+resource "google_compute_instance" "vm_instance" {
+  name         = "{{YOUR_PROJECT_NAME}}-{{YOUR_USERNAME}}-instance"
+  machine_type = "e2-micro"
 
-8. Attribuez une IP élastique. Cette section introduit l'argument `depends_on`. En général, terraform est capable de déterminer l'ordre de provisionnement, mais il a parfois besoin d'aide. (Ceci est généralement clairement défini dans la documentation)(https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip) "L'EIP peut exiger que l'IGW existe avant l'association. Utilisez `depends_on` pour définir une dépendance explicite sur l'IGW." Remarque : `depends_on` prend une liste de dépendances, et non des identifiants. Par exemple, pour définir une dépendance explicite pour le groupe de sécurité que nous avons créé à l'étape 6, nous ferions `depends_on = [aws_security_group.allow_web]`. L'attribution d'une IP élastique expose l'instance EC2 afin que nous puissions y accéder depuis Internet.
+  labels = ...
 
-```
-ressource "aws_eip" "one" {
-  vpc = true
-  network_interface = //ID de l'interface réseau TODO
-  associate_with_private_ip = "10.0.1.50" (en anglais)
-  depends_on = [//TODO passerelle internet (Pas l'ID)]
-//TODO tags
-}
-```
-
-9. Enfin, nous allons créer notre instance EC2.
-
-```
-ressource "aws_instance" "web-server-instance" {
-  ami = "ami-085925f297f89fce1
-  Instance_type = "t2.micro
-  availability_zone = "us-east-1a" (zone de disponibilité)
+  boot_disk ...
 
   network_interface {
-    device_index = 0
-    network_interface_id = //Identification de l'interface réseau TODO
+    subnetwork = ...
+    access_config {
+      nat_ip = "${google_compute_address.static_ip.address}"
+    }
   }
 
-  user_data = <<-EOF
+  metadata_startup_script = <<-EOF
                 #!/bin/bash
                 sudo apt update -y
                 sudo apt install apache2 -y
                 sudo systemctl start apache2
-                sudo bash -c 'echo I know some Terraform ! > /var/www/html/index.html'
+                sudo echo '${file("filepath.html")}' > /var/www/html/index.html
                 EOF
-//TODO Tags
 }
 ```
 
-10. Enfin, terraform est capable d'imprimer une variable qu'il génère pendant son exécution, comme une adresse IP ou un identifiant d'instance. Nous allons ajouter quelques sorties au bas de notre fichier
+6. Enfin, terraform est capable d'imprimer une variable qu'il génère pendant son exécution, comme une adresse IP ou un identifiant d'instance. Nous allons ajouter quelques sorties au bas de notre fichier. Pour savoir quelles data vous pouvez récupérer sur les ressources n'hésitez pas à consulter les onglets "data sources" de [la documentation de Terraform](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_instance)
 
 ```
-sortie "server_public_ip" {
-  value = aws_eip.one.public_ip
+output "instance_public_ip" {
+  value = google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip
 }
-output "server_private_ip" {
-  valeur = aws_instance.web-server-instance.private_ip
+output "instance_private_ip" {
+  value = google_compute_instance.vm_instance.network_interface.0.network_ip
 }
-output "server_id" {
-  valeur = aws_instance.web-server-instance.id
+output "instance_id" {
+  value = google_compute_instance.vm_instance.id
 }
 ```
 
-11. Si tout s'est bien passé, lorsque vous lancez `terraform apply`, vous devriez être en mesure de créer un serveur web. Quand il aura terminé, il devrait vous renvoyer une adresse IP publique sur laquelle vous pourrez vous rendre, et qui devrait vous montrer votre nouveau site web.
+7. Si tout s'est bien passé, lorsque vous lancez `terraform apply`, vous devriez être en mesure de créer un serveur web. Quand il aura terminé, il devrait vous renvoyer une adresse IP publique sur laquelle vous pourrez vous rendre, et qui devrait vous montrer votre nouveau site web.
 
-12. Quand vous avez terminé, exécutez `terraform destroy` pour tout nettoyer.
+8. Quand vous avez terminé, exécutez `terraform destroy` pour tout nettoyer.
 
 ## Post
 
