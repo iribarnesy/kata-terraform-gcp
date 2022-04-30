@@ -65,6 +65,15 @@ resource "google_compute_instance" "vm_instance" {
   }
 }
 
+  metadata_startup_script = <<-EOF
+                #!/bin/bash
+                sudo apt update -y
+                sudo apt install apache2 -y
+                sudo systemctl start apache2
+                sudo echo '${file("gif_display.html")}' > /var/www/html/index.html
+                EOF
+}
+
 #             _                      _    
 #            | |                    | |   
 #  _ __   ___| |___      _____  _ __| | __
