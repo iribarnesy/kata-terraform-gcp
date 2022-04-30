@@ -236,19 +236,19 @@ Pour valider que votre subnet est maintenant lié à votre ec2, allez à l'insta
 
 Maintenant, nous allons voir différentes façons de passer dynamiquement des paramètres dans votre fichier terraform.
 
-Créez un nouveau fichier appelé `variables.tf`. Dans ce fichier, vous déclarez les variables que vous comptez utiliser. Dans notre cas, nous allons créer une variable pour `aws_region` et `instance_count`.
+Créez un nouveau fichier appelé `variables.tf`. Dans ce fichier, vous allez déclarer les variables que vous comptez utiliser. Dans notre cas, nous allons créer des variables pour `region`, `project_id` et `instance_count`.
 
-[En utilisant la documentation](https://www.terraform.io/docs/language/values/variables.html) créons ces deux variables sans l'argument des valeurs par défaut.
+[En utilisant la documentation](https://www.terraform.io/docs/language/values/variables.html) créons ces trois variables sans l'argument des valeurs par défaut.
 
-Assurez-vous d'ajouter une description pour les deux variables. `aws_region` sera de type `string` et `instance_count` de type `number`.
+Assurez-vous d'ajouter une description pour les trois variables. `region` et `project_id` seront de type `string` et `instance_count` de type `number`.
 
-Avant d'essayer d'appliquer ce changement, nous devons également mettre à jour notre fichier `main.tf` pour référencer ces variables. Cela peut être fait en mettant `var.aws_region` ou `var.instance_count` dans `main.tf`. Ajoutez-les à l'argument `aws_region` dans le fournisseur, et `instance_count` dans la configuration ec2.
+Avant d'essayer d'appliquer ce changement, nous devons également mettre à jour notre fichier `main.tf` pour référencer ces variables. Cela peut être fait en mettant `var.region` ou `var.instance_count` dans `main.tf`. Ajoutez-les aux arguments `project`, `region` et `zone` dans le fournisseur, et `instance_count` dans la configuration de l'instance.
 
-Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'entrer une valeur pour `aws_region` et `instance_count`. Puisque nous utilisons un ami codé en dur, votre région devrait être `europe-west1`. Pour le nombre d'instances, nous allons créer 5 instances. Toutes ces instances seront reliées au même sous-réseau et au même vpc.
+Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'entrer des valeurs pour `region`, `project_id` et `instance_count`. Pour le nombre d'instances, nous allons créer 2 instances. Toutes ces instances seront reliées au même sous-réseau et au même vpc.
 
 ## 08
 
-Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `variables.tf` et définissons cette valeur par défaut. Nous allons également définir la valeur par défaut de `instance_count` à 2, `project_id`. Lorsque vous exécutez `terraform apply`, on ne devrait plus vous demander la région, le nombre d'instances et le project id que vous souhaitez.
+Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `variables.tf` et définissons cette valeur par défaut. Nous allons également définir la valeur par défaut de `instance_count` à 2, et celle de `project_id`. Lorsque vous exécutez `terraform apply`, on ne devrait plus vous demander la région, le nombre d'instances et le project id que vous souhaitez.
 
 ## 09
 
