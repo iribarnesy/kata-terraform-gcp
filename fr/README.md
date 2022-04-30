@@ -252,13 +252,13 @@ Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `var
 
 ## 09
 
-Now that we can use variables, we don't want to have to rely on entering values are run time, nor do we want to be always tied to the default values. We are going to create a new file called `terraform.tfvars`. Where as `main.tf` allows you to define variables, `terraform.tfvars` is where you can set their value
+Maintenant que nous pouvons utiliser des variables, nous ne voulons pas avoir à entrer des valeurs au moment de l'exécution, et nous ne voulons pas non plus être toujours liés aux valeurs par défaut. Nous allons créer un nouveau fichier appelé `terraform.tfvars`. Alors que `main.tf` vous permet de définir des variables, `terraform.tfvars` est l'endroit où vous pouvez définir leur valeur.
 
-[Using the docs](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files), we can create a `terraform.tfvars` file to set our `instance_count` variable to 2 instances.
+[En utilisant la documentation] (https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files), nous pouvons créer un fichier `terraform.tfvars` pour définir notre variable `instance_count` à une instance.
 
-Since we are using the default variable file name we do not any additional command line arguments when we run `terraform apply`. When you run `terraform apply` you will end up wth 2 instances without being asked how many you want to provision
+Puisque nous utilisons le nom de fichier de variable par défaut, nous n'avons pas d'arguments de ligne de commande supplémentaires lorsque nous exécutons `terraform apply`. Lorsque vous exécuterez `terraform apply`, vous obtiendrez une instances sans qu'on vous demande combien vous voulez en provisionner.
 
-run `terraform destroy` to clean up all resources you have created
+Exécutez `terraform destroy` pour nettoyer toutes les ressources que vous avez créées.
 
 ## 10
 
