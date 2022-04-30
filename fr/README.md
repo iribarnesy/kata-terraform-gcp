@@ -1,14 +1,14 @@
 # Terraform Kata
 
-Un petit mot sur la façon dont ce Kata est structuré. Chaque en-tête numérique ci-dessous est une itération de votre fichier terraform qui vous aidera à introduire un nouveau concept.[Si vous souhaitez considérer ce document comme un guide pas à pas, vous pouvez commencer ici](Instructions/README.md). Tout le contenu est le même, mais certaines personnes ont eu plus de facilité à suivre les petits documents.
+Un petit mot sur la façon dont ce Kata est structuré. Chaque en-tête numérique ci-dessous est une itération de votre fichier terraform qui vous aidera à introduire un nouveau concept.
 
 Les numéros de dossier dans le [GitLab Repo](https://gitlab.ippon.fr/jscharf/terraformkata) servent de réponse pour le concept correspondant afin de vérifier vos réponses ou de vous donner une solution si vous êtes bloqué. Vous devriez créer vos propres dossiers tout au long du Kata.
 
 ## Qu'est-ce que Terraform ?
 
-[Terraform by HashiCorp](https://www.terraform.io/) "est un outil logiciel open-source d'infrastructure en tant que code qui fournit un flux de travail CLI cohérent pour gérer des centaines de services en nuage. Terraform codifie les API de nuage dans des fichiers de configuration déclaratifs."
+[Terraform by HashiCorp](https://www.terraform.io/) est un outil logiciel open-source d'infrastructure en tant que code qui fournit un flux de travail CLI cohérent pour gérer des centaines de services du Cloud. Terraform codifie les API Cloud dans des fichiers de configuration déclaratifs.
 
-Ce que cela signifie réellement, c'est que Terraform vous permet d'utiliser un processus cohérent pour approvisionner et gérer votre infrastructure en nuage, quel que soit le service en nuage que vous utilisez. Grâce au HCL (HashiCorp Configuration Language), vous pouvez gérer l'ensemble de votre infrastructure en tant que code. Cela présente l'avantage supplémentaire de ne plus avoir besoin de connaître les subtilités de l'API de chaque service ou d'utiliser leur mécanisme de provisionnement natif.
+Ce que cela signifie réellement, c'est que Terraform vous permet d'utiliser un processus cohérent pour approvisionner et gérer votre infrastructure Cloud, quel que soit le service Cloud que vous utilisez. Grâce au HCL (HashiCorp Configuration Language), vous pouvez gérer l'ensemble de votre infrastructure en tant que code. Cela présente l'avantage supplémentaire de ne plus avoir besoin de connaître les subtilités de l'API de chaque service ou d'utiliser leur mécanisme de provisionnement natif.
 
 Terraform est une technologie déclarative, ce qui signifie que vous spécifiez l'état que vous souhaitez atteindre et Terraform se charge de le faire.
 
@@ -30,14 +30,16 @@ Vérifier que la facturation a bien été mise en place sur le projet. Sélectio
 
 Assurez-vous que vous disposez des autorisations Compute Engine nécessaires sur votre compte utilisateur:
 
-`compute.instance.*`
-`compute.firewalls.*`
+```
+compute.instance.*
+compute.firewalls.*
+```
 
 [Accéder à la page IAM](https://console.cloud.google.com/iam-admin/iam?hl=fr&_ga=2.26325172.807002807.1651086738-997347237.1649762783&_gac=1.27728206.1650559456.Cj0KCQjwgYSTBhDKARIsAB8Kuku36Hk2k82u55xBcNxRZuEwWaaWKMf3eQJAJPWz86oC2T2Ipje-V_oaAisTEALw_wcB)
 
 ### **Activer les API**
 
-Activer les API Compute Engine and OS Login.
+Activer les API Compute Engine et OS Login.
 
 [Activer les API](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com%2Coslogin.googleapis.com&hl=fr&_ga=2.24680627.807002807.1651086738-997347237.1649762783&_gac=1.91281768.1650559456.Cj0KCQjwgYSTBhDKARIsAB8Kuku36Hk2k82u55xBcNxRZuEwWaaWKMf3eQJAJPWz86oC2T2Ipje-V_oaAisTEALw_wcB)
 
@@ -71,9 +73,11 @@ Pour initialiser gcloud CLI, exécutez la commande gcloud init :
 ./google-cloud-sdk/bin/gcloud init
 ```
 
-Si Terraform n'est pas installé sur votre système, vous pouvez trouver le guide d'installation [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+### **Installer Terraform**
 
-Étant donné qu'au moment de la rédaction de cet article, tout le monde utilise un Ubuntu, vous pouvez télécharger Terraform avec en utilisant les commandes suivantes.
+Si Terraform n'est pas installé sur votre système, vous pouvez trouver le guide d'installation [ici](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+
+Étant donné qu'au moment de la rédaction de cet article, tout le monde utilise un Ubuntu, vous pouvez télécharger Terraform en utilisant les commandes suivantes.
 
 ```
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
@@ -81,7 +85,7 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 sudo apt-get update && sudo apt-get install terraform
 ```
 
-Exécutez la commande suivante et assurez-vous que vous êtes au moins sur la version v1.0.0 (Notez que ce Kata a été validé pour la dernière fois en utilisant la v1.0.7).
+Exécutez la commande suivante et assurez-vous que vous êtes au moins sur la version v1.0.0 (Notez que ce Kata a été validé pour la dernière fois en utilisant la v1.1.4).
 
 `terraform --version`
 
@@ -131,28 +135,28 @@ Après avoir enregistré ce fichier, exécutez `terraform init`
 
 ## 02 - création d'une instance minimale
 
-Nous allons maintenant créer une instance EC2. Celles-ci sont appelées `google_compute_instance` dans Terraform. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance), nous pouvons voir qu'il existe de nombreux champs pour tout ce que vous pouvez faire avec votre instance, mais nous allons commencer par les bases.
+Nous allons maintenant créer une instance Compute Engine. Celles-ci sont appelées `google_compute_instance` dans Terraform. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance), nous pouvons voir qu'il existe de nombreux champs pour tout ce que vous pouvez faire avec votre instance, mais nous allons commencer par les bases.
 
-Nous allons créer une instance EC2 qui a
+Nous allons créer une instance qui a
 
 ```
 name         = "{{YOUR_INSTANCE_NAME}}"
 machine_type = "e2-micro"
 ```
 
-et avec les étiquettes suivantes
+et avec les libellés suivantes
 
 ```
 creator = "{{YOUR_NAME}}"
 project = "{{YOUR_PROJECT_NAME}}"
 ```
 
-Les labels `creator`, `environment` et `project` sont des labels personnalisés que nous utiliserons dans le cadre d'une bonne hygiène GCP, ils peuvent peut être appliquée à la plupart des ressources GCP. [Documentation relative aux labels GCP](https://cloud.google.com/compute/docs/labeling-resources)
+Les labels `creator`, (`env`) et `project` sont des labels personnalisés que nous utiliserons dans le cadre d'une bonne hygiène GCP, ils peuvent être appliqués à la plupart des ressources GCP. [Documentation relative aux labels GCP](https://cloud.google.com/compute/docs/labeling-resources)
 
 Pour créer votre instance, nous allons ajouter ce qui suit à `main.tf`. Aucun autre argument ou balise n'est nécessaire pour `01`.
 
 ```
-resource "google_compute_instance" "default" {
+resource "google_compute_instance" "choose_a_name" {
   //TODO add name and machine type
 
   labels = {
@@ -168,10 +172,6 @@ resource "google_compute_instance" "default" {
 
   network_interface {
     network = "default"
-
-    access_config {
-      // Ephemeral public IP
-    }
   }
 }
 ```
@@ -179,29 +179,30 @@ resource "google_compute_instance" "default" {
 Exécutez `terraform validate` pour valider que vous avez une syntaxe correcte. Exécutez `terraform plan` pour vous assurer que vous créez bien ce que vous pensez. Vous devriez voir `Plan : 1 pour ajouter, 0 pour modifier, 0 pour détruire` en bas de la commande. Lorsque vous êtes satisfait, vous pouvez lancer `terraform apply`. Vous verrez à nouveau votre plan, et si tout semble bon, vous pouvez taper `yes` pour commencer votre déploiement. Vous verrez des mises à jour toutes les 10 secondes vous indiquant que Terraform et GCP travaillent sur votre infrastructure. Selon la complexité de votre infrastructure, cela peut prendre plus ou moins de temps. Vous devriez voir le bloc ci-dessous pendant que votre infrastructure s'approvisionne et se complète.
 
 ```
-google_compute_instance.default: Creating...
-google_compute_instance.default: Still creating... [10s elapsed]
+google_compute_instance.choose_a_name: Creating...
+google_compute_instance.choose_a_name: Still creating... [10s elapsed]
 
 ...
-google_compute_instance.default: Creation complete after 15s [id=projects/subtle-builder-348511/zones/europe-west1-c/instances/-instance]
+google_compute_instance.choose_a_name: Creation complete after 15s [id=projects/subtle-builder-348511/zones/europe-west1-c/instances/-instance]
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 
-Vous pouvez également le voir dans GCP via l'interface utilisateur en allant sur EC2 et en recherchant soit l'`id` qui a été affiché après la création, soit la valeur dans votre label `Name`.
+Vous pouvez également le voir dans GCP via l'interface utilisateur en allant sur Compute Engine et en recherchant soit l'`id` qui a été affiché après la création, soit en filtrant par `creator:{{YOUR_NAME}}`.
 
 Si vous regardez dans votre répertoire de travail, vous verrez un fichier `terraform.tfstate`. Il est important de laisser ce fichier en place et de ne pas en modifier le contenu. Ce fichier est la façon dont terraform garde la trace de l'infrastructure qu'il gère.
 
 ## 03 - Création de plusieurs instances
 
-Ajoutez l'argument `count` à `google_compute_instance` pour créer 3 instances ec2. **Attention chaque instance doit avoir un nom unique**, le count.index permet d'avoir l'index de chaque instance.
+Ajoutez l'argument `count` à `google_compute_instance` pour créer 3 instances. **Attention chaque instance doit avoir un nom unique**, le `count.index` permet d'avoir l'index de chaque instance.
 
-Puisque vous passez de 1 à 3 instances, lorsque vous exécutez `terraform plan`, vous devriez voir `Plan : 2 to add, 0 to change, 0 to destroy` puisque vous avez un net +2 dans vos instances.
-Après avoir exécuté `terraform apply` et vu que vous avez pu créer 3 instances, ramenez le compte à 1.
+Puisque vous passez de 1 à 3 instances, lorsque vous exécutez `terraform plan`, vous devriez voir `Plan : 3 to add, 0 to change, 1 to destroy`. En effet, comme vous avez changé le nom de celle déjà créé il est nécessaire de la supprimer pour la recréer, il n'est pas possible de modifier le nom d'une ressource une fois qu'elle a été créée.
+
+Après avoir exécuté `terraform apply` et si vous avez pu créer 3 instances, ramenez le `count` à 1.
 
 ## 04 - Création d'un VPC
 
-Nous allons maintenant créer un VPC de base. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network). Ce bloc peut aller en dessous du bloc que nous avons ajouté pour créer l'ec2.
+Nous allons maintenant créer un VPC de base. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network). Ce bloc peut aller en dessous du bloc que nous avons ajouté pour créer l'instance.
 
 ```
 resource "google_compute_network" "vpc" {
@@ -213,7 +214,7 @@ resource "google_compute_network" "vpc" {
 
 ## 05 - Création d'un subnet
 
-Maintenant nous allons créer un subnet. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) nous allons créer un subnet avec `ip_cidr_range = "10.0.1.0/24"`. Puisque les subnets sont liés à un vpc, nous allons utiliser l'id du vpc que nous avons créé dans l'argument `network`. Ceci peut être fait en référençant une variable qui stocke l'id du vpc que nous avons créé. `vpc.id` sera rempli comme l'id du vpc `main` que nous avons créé dans `04`. N'oubliez pas d'ajouter vos balises également.
+Maintenant nous allons créer un subnet. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) nous allons créer un subnet avec `ip_cidr_range = "10.0.1.0/24"`. Puisque les subnets sont liés à un vpc, nous allons utiliser l'id du vpc que nous avons créé dans l'argument `network`. Ceci peut être fait en référençant une variable qui stocke l'id du vpc que nous avons créé. `vpc.id` sera rempli comme l'id du vpc `main` que nous avons créé dans `04`. N'oubliez pas d'ajouter votre username et le projet dans le nom de toutes les ressources que vous créez. Chaque nom de ressource doit être unique.
 
 ```
 resource "google_compute_subnetwork" "vpc_subnet" {
@@ -228,9 +229,9 @@ Après avoir exécuté `terraform apply`, si vous regardez dans la console votre
 
 ## 06 - Liaison de l'instance au sous-réseau
 
-En utilisant ce que vous venez d'apprendre sur le référencement d'une ressource, modifiez dans votre configuration `compute_instance` pour lier votre vpc et votre subnet à votre instance.
+En utilisant ce que vous venez d'apprendre sur le référencement d'une ressource, modifiez votre `compute_instance` pour lier votre vpc et votre subnet à votre instance.
 
-Pour valider que votre subnet est maintenant lié à votre ec2, allez à l'instance ec2 dans la console, et validez que vous voyez votre subnet dans l'onglet sécurité.
+Pour valider que votre subnet est maintenant lié à votre instance, cliquez dessus dans la console, et validez que vous voyez votre subnet dans l'onglet réseau.
 
 ## 07 - Variabiliser
 
@@ -248,15 +249,15 @@ Maintenant, lorsque vous exécutez `terraform apply`, il vous sera demandé d'en
 
 ## 08 - Valeurs par défaut des variables
 
-Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `variables.tf` et définissons cette valeur par défaut. Nous allons également définir la valeur par défaut de `instance_count` à 2, et celle de `project_id`. Lorsque vous exécutez `terraform apply`, on ne devrait plus vous demander la région, le nombre d'instances et le project id que vous souhaitez.
+Puisque nous travaillons exclusivement dans `europe-west1`, retournons dans `variables.tf` et définissons cette valeur par défaut. Nous allons également définir la valeur par défaut de `instance_count` (à 2), et celle de `project_id`. Lorsque vous exécutez `terraform apply`, on ne devrait plus vous demander la région, le nombre d'instances et le project id que vous souhaitez.
 
 ## 09 - Ajout d'un fichier de configuration des variables
 
 Maintenant que nous pouvons utiliser des variables, nous ne voulons pas avoir à entrer des valeurs au moment de l'exécution, et nous ne voulons pas non plus être toujours liés aux valeurs par défaut. Nous allons créer un nouveau fichier appelé `terraform.tfvars`. Alors que `main.tf` vous permet de définir des variables, `terraform.tfvars` est l'endroit où vous pouvez définir leur valeur.
 
-[En utilisant la documentation] (https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files), nous pouvons créer un fichier `terraform.tfvars` pour définir notre variable `instance_count` à une instance.
+[En utilisant la documentation](https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files), nous pouvons créer un fichier `terraform.tfvars` pour définir notre variable `instance_count` à une instance.
 
-Puisque nous utilisons le nom de fichier de variable par défaut, nous n'avons pas d'arguments de ligne de commande supplémentaires lorsque nous exécutons `terraform apply`. Lorsque vous exécuterez `terraform apply`, vous obtiendrez une instances sans qu'on vous demande combien vous voulez en provisionner.
+Puisque nous utilisons le nom de fichier de variable par défaut, nous n'avons pas d'arguments de ligne de commande supplémentaires lorsque nous exécutons `terraform apply`. Lorsque vous exécuterez `terraform apply`, vous obtiendrez une instance sans qu'on vous demande combien vous voulez en provisionner.
 
 Exécutez `terraform destroy` pour nettoyer toutes les ressources que vous avez créées.
 
