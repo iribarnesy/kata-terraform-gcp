@@ -7,10 +7,10 @@
 #   \_/ \__,_|_|  |_|\__,_|_.__/|_|\___||___/
 #                                            
 locals {
-  region = "europe-west1"
-  project_id = "subtle-builder-348511"
+  region       = "europe-west1"
+  project_id   = "subtle-builder-348511"
   project_name = "terraformkata"
-  username = "ippon"
+  username     = "ippon"
 }
 
 #                   __ _                       _   _             
@@ -61,9 +61,9 @@ resource "google_compute_instance" "vm_instance" {
   network_interface {
     subnetwork = google_compute_subnetwork.vpc_subnet.self_link
     access_config {
-      nat_ip = "${google_compute_address.static_ip.address}"
+      nat_ip = google_compute_address.static_ip.address
+    }
   }
-}
 
   metadata_startup_script = <<-EOF
                 #!/bin/bash
@@ -109,10 +109,10 @@ resource "google_compute_address" "static_ip" {
 
 # Allow HTTP(S) from everywhere
 resource "google_compute_firewall" "everywhere_to_http" {
-  name    = "${local.project_name}-${local.username}-ingress-allow-everywhere-to-http"
-  network = google_compute_network.vpc.name
+  name        = "${local.project_name}-${local.username}-ingress-allow-everywhere-to-http"
+  network     = google_compute_network.vpc.name
   description = "Allow HTTP(S) from everywhere"
-  
+
   direction = "INGRESS"
   priority  = 1000
 
@@ -126,8 +126,8 @@ resource "google_compute_firewall" "everywhere_to_http" {
 }
 # Allow SSH connection
 resource "google_compute_firewall" "iap_to_ssh" {
-  name    = "${local.project_name}-${local.username}-ingress-allow-iap-to-ssh"
-  network = google_compute_network.vpc.name
+  name        = "${local.project_name}-${local.username}-ingress-allow-iap-to-ssh"
+  network     = google_compute_network.vpc.name
   description = "Allow SSH from IAP sources"
 
   direction = "INGRESS"
