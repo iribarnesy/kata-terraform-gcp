@@ -11,8 +11,9 @@ provider "google" {
 }
 
 resource "google_compute_instance" "vm_instance" {
-  name         = "terraformkata-ippon-instance"
-  machine_type = "e2-micro"
+  name                      = "terraformkata-ippon-instance"
+  machine_type              = "e2-micro"
+  allow_stopping_for_update = true
 
   labels = {
     creator = "ippon"

@@ -142,6 +142,7 @@ Nous allons créer une instance qui a
 ```
 name         = "{{YOUR_INSTANCE_NAME}}"
 machine_type = "e2-micro"
+allow_stopping_for_update = true
 ```
 
 et avec les libellés suivantes
@@ -277,6 +278,7 @@ resource "google_compute_address" "vpn_static_ip" {
   name = "{{YOUR_PROJECT_NAME}}-{{YOUR_USERNAME}}-static-ip"
 }
 ```
+
 3. (Optionnel) Créez une règle de firewall qui vous permettra de vous connecter en SSH à la machine. Ajoutez une ressource `google_compute_firewall` pour créer une règle de firewall. Le service IAP de GCP permet de se connecter de manière sécurisée, en SSH, à une instance dans un subnet privé. Pour faire cela il faut néanmoins autoriser les IPs du service IAP (un bloc CIDR fixé en dur).
 
 ```
@@ -297,6 +299,7 @@ resource "google_compute_firewall" "iap_to_ssh" {
   }
 }
 ```
+
 4. De la même manière, autorisez la connexion à votre instance depuis internet. Le bloc CIDR pour internet est `0.0.0.0/0`. La connexion de votre navigateur se fait en TCP sur le port 80.
 
 5. Enfin, nous allons créer notre instance. Nous allons relier, le subnet à la network interface et surtout associer une ip externe à notre instance.

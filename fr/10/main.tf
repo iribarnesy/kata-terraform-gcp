@@ -43,8 +43,9 @@ provider "google" {
 # |_|_| |_|___/\__\__,_|_| |_|\___\___|
 #                                      
 resource "google_compute_instance" "vm_instance" {
-  name         = "${local.project_name}-${local.username}-instance"
-  machine_type = "e2-micro"
+  name                      = "${local.project_name}-${local.username}-instance"
+  machine_type              = "e2-micro"
+  allow_stopping_for_update = true
 
   labels = {
     creator = local.username
