@@ -8,7 +8,7 @@
 #                                            
 locals {
   region       = "europe-west1"
-  project_id   = "subtle-builder-348511"
+  project_id   = "kata-terraform-gcp"
   project_name = "terraformkata"
   username     = "ippon"
 }
@@ -55,7 +55,7 @@ resource "google_compute_instance" "vm_instance" {
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-9"
+      image = "debian-cloud/debian-11"
     }
   }
 

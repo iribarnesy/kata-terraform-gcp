@@ -24,7 +24,7 @@ Dans Google Cloud Console, accédez à la page de sélection du projet.
 
 Sélectionnez ou créez un projet Google Cloud.
 
-Vérifier que la facturation a bien été mise en place sur le projet. Sélectionner l'onglet Facturation puis Vue d'ensesemble.
+Vérifier que la facturation a bien été mise en place sur le projet. Sélectionner l'onglet Facturation puis Vue d'ensemble.
 
 ### **Configurer les autorisations**
 
@@ -47,7 +47,7 @@ Activer les API Compute Engine et OS Login.
 
 https://cloud.google.com/sdk/docs/install
 
-Télécharger le fichier d'archive **Linux 64 bits** à l'aide de la commande ci-dessous
+Télécharger le fichier d'archive **Linux 64 bits** (approximativement 100Mo nécessaires) à l'aide de la commande ci-dessous
 
 ```
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-382.0.0-linux-x86_64.tar.gz
@@ -89,7 +89,7 @@ Exécutez la commande suivante et assurez-vous que vous êtes au moins sur la ve
 
 `terraform --version`
 
-## 00 - les commandes
+## 00 - Les commandes
 
 Avant de commencer, il y a quelques concepts et commandes utiles que vous devez connaître.
 
@@ -105,7 +105,7 @@ Terraform est à la fois constructif et destructif en fonction de ce qui se trou
 
 `terraform destroy` nettoiera toute l'infrastructure définie dans le fichier Terraform.
 
-## 01 - initialisation
+## 01 - Initialisation
 
 Si vous ne l'avez pas encore fait, créez un répertoire de travail dans lequel vous allez travailler sur ce Kata. Créez un nouveau fichier dans ce répertoire appelé `main.tf` et ouvrez ce fichier dans votre IDE.
 
@@ -133,7 +133,7 @@ Après avoir enregistré ce fichier, exécutez `terraform init`
 
 [Terraform init](https://www.terraform.io/docs/cli/commands/init.html) initialise votre répertoire de travail avec quelques fichiers et répertoires cachés dont Terraform a besoin.
 
-## 02 - création d'une instance minimale
+## 02 - Création d'une instance minimale
 
 Nous allons maintenant créer une instance Compute Engine. Celles-ci sont appelées `google_compute_instance` dans Terraform. [En utilisant la documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance), nous pouvons voir qu'il existe de nombreux champs pour tout ce que vous pouvez faire avec votre instance, mais nous allons commencer par les bases.
 
@@ -166,7 +166,7 @@ resource "google_compute_instance" "choose_a_name" {
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-9"
+      image = "debian-cloud/debian-11"
     }
   }
 
@@ -184,7 +184,7 @@ google_compute_instance.choose_a_name: Creating...
 google_compute_instance.choose_a_name: Still creating... [10s elapsed]
 
 ...
-google_compute_instance.choose_a_name: Creation complete after 15s [id=projects/subtle-builder-348511/zones/europe-west1-c/instances/-instance]
+google_compute_instance.choose_a_name: Creation complete after 15s [id=projects/kata-terraform-gcp/zones/europe-west1-c/instances/-instance]
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
@@ -302,7 +302,7 @@ resource "google_compute_firewall" "iap_to_ssh" {
 
 4. De la même manière, autorisez la connexion à votre instance depuis internet. Le bloc CIDR pour internet est `0.0.0.0/0`. La connexion de votre navigateur se fait en TCP sur le port 80.
 
-5. Enfin, nous allons créer notre instance. Nous allons relier, le subnet à la network interface et surtout associer une ip externe à notre instance.
+5. Enfin, nous allons créer notre instance. Nous allons relier le subnet à la network interface et surtout associer une ip externe à notre instance.
 
 Aussi, nous allons insérer un script qui se lancera au démarrage afin que l'instance lance un serveur Apache qui servira une page web statique.
 Le script doit être renseigné avec l'attribut `metadata_startup_script`.

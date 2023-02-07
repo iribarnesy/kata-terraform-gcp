@@ -5,7 +5,7 @@ terraform {
   }
 }
 provider "google" {
-  project = "subtle-builder-348511"
+  project = "kata-terraform-gcp"
   region  = "europe-west1"
   zone    = "europe-west1-c"
 }

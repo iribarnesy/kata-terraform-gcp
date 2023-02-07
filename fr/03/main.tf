@@ -5,7 +5,7 @@ terraform {
   }
 }
 provider "google" {
-  project = "subtle-builder-348511"
+  project = "kata-terraform-gcp"
   region  = "europe-west1"
   zone    = "europe-west1-c"
 }
@@ -23,7 +23,7 @@ resource "google_compute_instance" "vm_instance" {
   }
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-9"
+      image = "debian-cloud/debian-11"
     }
   }
 
