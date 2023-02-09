@@ -65,12 +65,20 @@ Exécutez le script (à partir de la racine du dossier dans lequel vous l'avez e
 ./google-cloud-sdk/install.sh
 ```
 
-Ouvrez un nouveau terminal pour que les modifications prennent effet.
+Acceptez l'ajout de `gcloud` au $PATH. Pour pouvoir exécuter les commandes `gcloud` depuis n'importe où.
 
-Pour initialiser gcloud CLI, exécutez la commande gcloud init :
+**Ouvrez un nouveau terminal pour que les modifications prennent effet. Ou exécutez la commande suivante `bash`.**
+
+Pour initialiser gcloud CLI, exécutez la commande gcloud init, suivez les propositions afin de linker la CLI à votre projet :
 
 ```
-./google-cloud-sdk/bin/gcloud init
+gcloud init
+```
+
+Il est possible que la méthode d'authentification par défaut soit basée sur des crendentials qui sont introuvables. Dans ce cas là vous pouvez exécuter la commande suivante :
+
+```
+gcloud auth application-default login
 ```
 
 ### **Installer Terraform**
@@ -112,6 +120,8 @@ Si vous ne l'avez pas encore fait, créez un répertoire de travail dans lequel 
 Dans ce fichier, nous allons ajouter notre [provider](https://www.terraform.io/docs/language/providers/index.html). Prenez un moment pour consulter les documents sur [Terraform Providers](https://www.terraform.io/docs/language/providers/index.html). Le concept important à saisir ici est que le fournisseur vous permet d'interagir entre Terraform et le service que vous utilisez, dans ce cas GCP.
 
 Nous allons maintenant ajouter le [GCP Terraform provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs) en ajoutant le bloc suivant à notre `main.tf`
+
+/!\ Les morceaux de code suivants contiennent des accolades, elles servent à délimiter les variables. Ex: `{{YOUR-PROJECT-ID}}` deviendra `id_of_the_project`
 
 ```
 terraform {
@@ -308,6 +318,7 @@ Aussi, nous allons insérer un script qui se lancera au démarrage afin que l'in
 Le script doit être renseigné avec l'attribut `metadata_startup_script`.
 
 Le texte HTML de la page peut être écrit dans un fichier séparé qui sera chargé en utilisant la commande `file("filepath.html")` de Terraform. (Vous pouvez par exemple chercher un gif sur [giphy](https://giphy.com/), puis cliquer sur "Embed" pour avoir un code HTML d'intégration)
+
 
 ```
 resource "google_compute_instance" "vm_instance" {
