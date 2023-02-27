@@ -16,7 +16,7 @@ Terraform est une technologie déclarative, ce qui signifie que vous spécifiez 
 
 https://cloud.google.com/docs/terraform/get-started-with-terraform?hl=fr
 
-### **Sélectionner ou créer un projet**
+### A - **Sélectionner ou créer un projet**
 
 Dans Google Cloud Console, accédez à la page de sélection du projet.
 
@@ -26,7 +26,7 @@ Sélectionnez ou créez un projet Google Cloud.
 
 Vérifier que la facturation a bien été mise en place sur le projet. Sélectionner l'onglet Facturation puis Vue d'ensemble.
 
-### **Configurer les autorisations**
+### B - **Configurer les autorisations**
 
 Assurez-vous que vous disposez des autorisations Compute Engine nécessaires sur votre compte utilisateur:
 
@@ -37,13 +37,13 @@ compute.firewalls.*
 
 [Accéder à la page IAM](https://console.cloud.google.com/iam-admin/iam?hl=fr&_ga=2.26325172.807002807.1651086738-997347237.1649762783&_gac=1.27728206.1650559456.Cj0KCQjwgYSTBhDKARIsAB8Kuku36Hk2k82u55xBcNxRZuEwWaaWKMf3eQJAJPWz86oC2T2Ipje-V_oaAisTEALw_wcB)
 
-### **Activer les API**
+### C - **Activer les API**
 
-Activer les API Compute Engine et OS Login.
+Activer les API Compute Engine et OS Login. Ce sont les deux services que nous allons utiliser plus tard.
 
 [Activer les API](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com%2Coslogin.googleapis.com&hl=fr&_ga=2.24680627.807002807.1651086738-997347237.1649762783&_gac=1.91281768.1650559456.Cj0KCQjwgYSTBhDKARIsAB8Kuku36Hk2k82u55xBcNxRZuEwWaaWKMf3eQJAJPWz86oC2T2Ipje-V_oaAisTEALw_wcB)
 
-### **Installer la CLI gcloud**
+### D - **Installer la CLI gcloud**
 
 https://cloud.google.com/sdk/docs/install
 
@@ -67,21 +67,31 @@ Exécutez le script (à partir de la racine du dossier dans lequel vous l'avez e
 
 Acceptez l'ajout de `gcloud` au $PATH. Pour pouvoir exécuter les commandes `gcloud` depuis n'importe où.
 
-**Ouvrez un nouveau terminal pour que les modifications prennent effet. Ou exécutez la commande suivante `bash`.**
+**Ouvrez un nouveau terminal pour que les modifications prennent effet. Ou exécutez la commande `bash`.**
 
-Pour initialiser gcloud CLI, exécutez la commande gcloud init, suivez les propositions afin de linker la CLI à votre projet :
+Pour initialiser gcloud CLI, exécutez la commande gcloud init, suivez les propositions afin de lier la CLI à votre projet :
 
 ```
 gcloud init
 ```
 
-Il est possible que la méthode d'authentification par défaut soit basée sur des crendentials qui sont introuvables. Dans ce cas là vous pouvez exécuter la commande suivante :
-
-```
-gcloud auth application-default login
-```
-
-### **Installer Terraform**
+> ### D - Troubleshoot : **En cas de credentials gcloud manquants**
+> 
+> Il est possible que Terraform ne trouve pas les credentials gcloud. Dans ce cas là vous pouvez exécuter la commande suivante :
+> 
+> ```
+> gcloud auth application-default login
+> ```
+> 
+> Si ça ne fonctionne toujours pas alors vous pouvez forcer l'authentification sur un projet spécifique en rajoutant le flag --project
+> 
+> ```
+> gcloud auth application-default login --project <project_id>
+> ```
+> 
+> Cette erreur survient lorsque vous essayez d'accéder à un projet pour lequel vous n'avez pas configuré gcloud. Vous pouvez donc alternativement reconfigurer gcloud en faisant un gcloud init.
+> 
+### E - **Installer Terraform**
 
 Si Terraform n'est pas installé sur votre système, vous pouvez trouver le guide d'installation [ici](https://learn.hashicorp.com/tutorials/terraform/install-cli).
 
@@ -96,6 +106,32 @@ sudo apt-get update && sudo apt-get install terraform
 Exécutez la commande suivante et assurez-vous que vous êtes au moins sur la version v1.0.0 (Notez que ce Kata a été validé pour la dernière fois en utilisant la v1.1.4).
 
 `terraform --version`
+> ### E - Troubleshoot : **En cas de problème d'installation Terraform**
+> 
+> 1. Si votre réseau vous empêche de faire la commande curl (à cause d'un certificat SSL manquant), alors ajoutez le flag `--insecure` au curl.
+> 
+> 2. Si vous avez un problème de certificat NO-PUBKEY AA16FCBCA621E701, essayez la commande suivante
+> 
+> ```
+> sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AA16FCBCA621E701
+> 
+> ```
+> 
+> Puis réessayez à partir du curl.
+> 
+> 3. Si les deux commandes ci-dessus ne changent rien alors essayez d'ajouter vous même le gpg.
+> 
+> ```
+> curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+> 
+> echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null
+> ```
+> 
+> Après ça, vous devriez avoir à exécuter seulement ceci
+> ```
+> sudo apt-get update && sudo apt-get install terraform
+> terraform --version
+> ```
 
 ## 00 - Les commandes
 
